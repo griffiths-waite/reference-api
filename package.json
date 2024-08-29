@@ -1,0 +1,31 @@
+{
+  "name": "reference-api",
+  "version": "1.0.0",
+  "description": "A reference API for Enterprise API Development",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'node --loader ts-node/esm' src/index.ts",
+    "build": "tsc",
+    "prod": "node dist/index.js",
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "Griffiths Waite",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.2"
+  },
+  "dependencies": {
+    "@types/oracledb": "^6.5.1",
+    "dotenv": "^16.4.5",
+    "fastify": "^4.28.1",
+    "fastify-metrics": "^11.0.0",
+    "nodemon": "^3.1.4",
+    "oracledb": "^6.6.0",
+    "prom-client": "^15.1.3"
+  }
+}
