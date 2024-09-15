@@ -1,6 +1,6 @@
 import oracledb from "oracledb";
 import { getDBConnection } from "../../oracledb";
-import { Game } from "./games.core.js";
+import { Game } from "./games.core";
 
 export const getGamesFromDatabase = async (): Promise<Game[]> => {
   let connection;

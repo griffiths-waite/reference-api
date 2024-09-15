@@ -2,10 +2,9 @@
   "name": "reference-api",
   "version": "1.0.0",
   "description": "A reference API for Enterprise API Development",
-  "type": "commonjs",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'node --loader ts-node/esm' src/index.ts",
+    "dev": "nodemon --watch 'src/**/*.ts' --watch '.env' --exec 'ts-node -r dotenv/config src/index.ts'",
     "build": "tsc",
     "prod": "node dist/index.js",
     "test": "vitest"

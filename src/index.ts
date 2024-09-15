@@ -1,7 +1,8 @@
 import Fastify from "fastify";
-import healthRoute from "./routes/health.js";
-import metricsRoute from "./routes/metrics.js";
-import { gamesRouter } from "./routes/games/games.router.js";
+import healthRoute from "./routes/health";
+import metricsRoute from "./routes/metrics";
+import { gamesRouter } from "./routes/games";
+
 const fastify = Fastify({
   logger: true,
 });
@@ -10,7 +11,7 @@ fastify.register(healthRoute);
 fastify.register(metricsRoute);
 fastify.register(gamesRouter);
 
-export const start = async () => {
+const start = async () => {
   try {
     await fastify.listen({ port: 3000 });
   } catch (err) {

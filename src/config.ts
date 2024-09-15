@@ -15,7 +15,7 @@ interface Config {
 
 export const config: Config = {
   database: {
-    user: process.env.DB_USER,
+    user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     connectString: `(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${process.env.DB_HOST})(PORT=${process.env.DB_PORT}))(CONNECT_DATA=(SERVICE_NAME=${process.env.DB_SERVICE})))`,
   },
@@ -26,6 +26,7 @@ export const config: Config = {
 
 // Type guard to check if all required environment variables are set
 const isConfigValid = (config: Config): boolean => {
+  console.log(config);
   return Boolean(
     config.database.user &&
       config.database.password &&

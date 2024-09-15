@@ -1,4 +1,4 @@
-import { getGamesFromDatabase } from "./games.model.js";
+import { getGamesFromDatabase } from "./games.model";
 
 export interface Game {
   id: number;
