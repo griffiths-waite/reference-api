@@ -29,11 +29,14 @@ const formatGames = async (games: Game[]): Promise<Game[]> => {
         const weather = await getHistoricWeatherByCity({ city: game.location, date: game.date });
         return {
           ...game,
-          weather: {
-            temperature: weather.data[0].temp,
-            feelsLikeTemperature: weather.data[0].feels_like,
-            description: weather.data[0].weather[0].description,
-          },
+          weather:
+            weather.data.length && weather.data[0].weather.length
+              ? {
+                  temperature: weather.data[0].temp,
+                  feelsLikeTemperature: weather.data[0].feels_like,
+                  description: weather.data[0].weather[0].description,
+                }
+              : undefined,
         };
       }),
     );
