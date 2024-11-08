@@ -38,7 +38,7 @@ const baseFetch = async <ResponseType>(
 ): Promise<ResponseType> => {
   const fullUrl = formatUrl(url, baseUrl, options.query);
 
-  logger.debug(
+  logger.info(
     {
       method: options.method,
       headers: options.headers,

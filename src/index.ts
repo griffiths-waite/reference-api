@@ -19,6 +19,7 @@ fastify.register(gamesRouter);
 
 const start = async () => {
   try {
+    logger.level = config.logging.level;
     await fastify.listen({ port: config.server.port });
     await weatherApiHealthCheck();
   } catch (err) {

@@ -12,6 +12,9 @@ interface Config {
   server: {
     port: number | undefined;
   };
+  logging: {
+    level: string;
+  };
   weather: {
     apiKey: string;
     baseUrl: string;
@@ -29,6 +32,9 @@ export const config: Config = {
   },
   server: {
     port: Number(process.env.PORT) || 3000,
+  },
+  logging: {
+    level: process.env.LOG_LEVEL || "debug",
   },
   weather: {
     apiKey: process.env.WEATHER_API_KEY || "",
@@ -49,7 +55,7 @@ const logConfig = (config: Config) => {
 
   redactedConfig.weather.apiKey = redactedValue;
 
-  logger.debug(redactedConfig, "Environment variables");
+  logger.info(redactedConfig, "Environment variables");
 };
 
 // Type guard to check if all required environment variables are set
