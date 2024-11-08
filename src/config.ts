@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import { logger } from "./logger";
 
 dotenv.config();
 
@@ -38,9 +39,22 @@ export const config: Config = {
   },
 };
 
+const logConfig = (config: Config) => {
+  const redactedValue = "***REDACTED***";
+  const redactedConfig = JSON.parse(JSON.stringify(config));
+
+  redactedConfig.database.user = redactedValue;
+  redactedConfig.database.password = redactedValue;
+  redactedConfig.database.connectString = redactedValue;
+
+  redactedConfig.weather.apiKey = redactedValue;
+
+  logger.debug(redactedConfig, "Environment variables");
+};
+
 // Type guard to check if all required environment variables are set
 const isConfigValid = (config: Config): boolean => {
-  console.log(config);
+  logConfig(config);
   return Boolean(
     config.database.user &&
       config.database.password &&
