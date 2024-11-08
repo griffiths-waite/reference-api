@@ -1,4 +1,5 @@
 import Fastify from "fastify";
+import { config } from "./config";
 import { logger } from "./logger";
 import { gamesRouter } from "./routes/games";
 import healthRoute from "./routes/health";
@@ -15,7 +16,7 @@ fastify.register(gamesRouter);
 
 const start = async () => {
   try {
-    await fastify.listen({ port: 3000 });
+    await fastify.listen({ port: config.server.port });
     await weatherApiHealthCheck();
   } catch (err) {
     fastify.log.error(err);
