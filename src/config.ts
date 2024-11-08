@@ -16,6 +16,7 @@ interface Config {
     level: string;
   };
   weather: {
+    enabled: boolean;
     apiKey: string;
     baseUrl: string;
     dataApiVersion: string;
@@ -37,6 +38,7 @@ export const config: Config = {
     level: process.env.LOG_LEVEL || "debug",
   },
   weather: {
+    enabled: true,
     apiKey: process.env.WEATHER_API_KEY || "",
     baseUrl: process.env.WEATHER_BASE_URL || "",
     dataApiVersion: process.env.WEATHER_DATA_API_VERSION || "2.5",
@@ -61,13 +63,7 @@ const logConfig = (config: Config) => {
 // Type guard to check if all required environment variables are set
 const isConfigValid = (config: Config): boolean => {
   logConfig(config);
-  return Boolean(
-    config.database.user &&
-      config.database.password &&
-      config.database.connectString &&
-      config.weather.apiKey &&
-      config.weather.baseUrl,
-  );
+  return Boolean(config.database.user && config.database.password && config.database.connectString);
 };
 
 if (!isConfigValid(config)) {
