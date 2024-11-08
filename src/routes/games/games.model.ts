@@ -1,4 +1,3 @@
-import oracledb from "oracledb";
 import { getDBConnection } from "../../oracledb";
 import { Game } from "./games.core";
 
@@ -6,7 +5,11 @@ export const getGamesFromDatabase = async (): Promise<Game[]> => {
   let connection;
   try {
     connection = await getDBConnection();
-    const result = await connection.execute(`SELECT * FROM games`);
+    const result = await connection.execute(`SELECT *
+FROM   (SELECT *
+        FROM   games
+        ORDER  BY play_date DESC)
+WHERE  rownum <= 10`);
 
     return (
       result.rows?.map((row: any) => ({
