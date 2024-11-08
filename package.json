@@ -4,7 +4,7 @@
   "description": "A reference API for Enterprise API Development",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "nodemon --watch 'src/**/*.ts' --watch '.env' --exec 'ts-node -r dotenv/config src/index.ts'",
+    "dev": "nodemon",
     "build": "tsc",
     "prod": "node dist/index.js",
     "test": "vitest"
