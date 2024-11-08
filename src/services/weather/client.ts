@@ -1,5 +1,5 @@
 import { config } from "../../config";
-import { baseFetch, Options } from "../client";
+import baseFetch, { Options } from "../client";
 
 const headers = {
   "Content-Type": "application/json",

@@ -1,5 +1,6 @@
 import { fetch, RequestInit, Response } from "undici";
 import { logger } from "../logger";
+import { APIError } from "./error";
 
 const defaultTimeout = 5000;
 
@@ -29,7 +30,7 @@ const formatUrl = (url: string, baseUrl: string, query?: Query, redacted: string
   return fullUrl.toString();
 };
 
-export const baseFetch = async <ResponseType>(
+const baseFetch = async <ResponseType>(
   url: string,
   baseUrl: string,
   serviceName: string,
@@ -68,24 +69,4 @@ export const baseFetch = async <ResponseType>(
   }
 };
 
-export const normaliseUrl = (url: string) => {
-  return url.startsWith("/") ? url.slice(1) : url;
-};
-
-export class APIError extends Error {
-  status: number;
-  statusText: string;
-  #response: Response;
-
-  constructor(response: Response) {
-    super("API Error occurred");
-    this.name = "APIError";
-    this.status = response.status;
-    this.statusText = response.statusText;
-    this.#response = response;
-  }
-
-  async json() {
-    return await this.#response.json();
-  }
-}
+export default baseFetch;
