@@ -1,6 +1,5 @@
 {
-  "watch": ["src/**/*.ts", ".env"],
-  "execMap": {
-    "ts": "ts-node -r dotenv/config src/index.ts"
-  }
+  "watch": ["src"],
+  "ext": "ts",
+  "exec": "ts-node src/index.ts"
 }
