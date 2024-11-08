@@ -38,7 +38,7 @@ const baseFetch = async <ResponseType>(
 ): Promise<ResponseType> => {
   const fullUrl = formatUrl(url, baseUrl, options.query);
 
-  logger.info(
+  logger.debug(
     {
       method: options.method,
       headers: options.headers,
@@ -52,7 +52,7 @@ const baseFetch = async <ResponseType>(
     signal: AbortSignal.timeout(options.timeout || defaultTimeout),
   });
 
-  logger.debug(`Response status: ${response.status}`);
+  logger.debug({ status: response.status }, `(${serviceName}) Exteral API response`);
 
   if (response.ok) {
     const data = (await response.json()) as ResponseType;
