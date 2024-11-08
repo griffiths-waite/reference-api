@@ -1,4 +1,4 @@
-import { weatherApi } from "./client";
+import client from "./client";
 
 export interface GetCurrentWeather {
   lat: number;
@@ -24,11 +24,8 @@ export interface CurrentWeather {
   };
 }
 
-export const getCurrentWeather = async ({
-  lat,
-  lon,
-}: GetCurrentWeather): Promise<CurrentWeather> => {
-  return await weatherApi<CurrentWeather>("data/2.5/weather", {
+export const getCurrentWeather = async ({ lat, lon }: GetCurrentWeather): Promise<CurrentWeather> => {
+  return await client<CurrentWeather>("data/2.5/weather", {
     query: { lat, lon },
     method: "GET",
   });
