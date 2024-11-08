@@ -1,10 +1,13 @@
 import Fastify from "fastify";
+import oracledb from "oracledb";
 import { config } from "./config";
 import { logger } from "./logger";
 import { gamesRouter } from "./routes/games";
 import healthRoute from "./routes/health";
 import metricsRoute from "./routes/metrics";
 import weatherApiHealthCheck from "./services/weather/health-check";
+
+oracledb.initOracleClient();
 
 const fastify = Fastify({
   logger,
