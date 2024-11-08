@@ -1,3 +1,4 @@
+import { logger } from "../../logger";
 import { getDBConnection } from "../../oracledb";
 import { Game } from "./games.core";
 
@@ -6,8 +7,11 @@ export const getGamesFromDatabase = async (): Promise<Game[]> => {
   try {
     connection = await getDBConnection();
     const result = await connection.execute(`SELECT *
-FROM   (SELECT *
+FROM   (SELECT games.*,
+               clubs.city_name AS location
         FROM   games
+               JOIN clubs
+                 ON clubs.club_id = games.home_club_id
         ORDER  BY play_date DESC)
 WHERE  rownum <= 10`);
 
@@ -24,17 +28,18 @@ WHERE  rownum <= 10`);
         homeCorners: row[8],
         awayCorners: row[9],
         homePossession: row[10],
+        location: row[11],
       })) || []
     );
   } catch (err) {
-    console.error(err);
+    logger.error(err);
     return [];
   } finally {
     if (connection) {
       try {
         await connection.close();
       } catch (err) {
-        console.error(err);
+        logger.error(err);
       }
     }
   }
