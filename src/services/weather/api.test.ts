@@ -1,6 +1,13 @@
 import { Dispatcher, getGlobalDispatcher, MockAgent, setGlobalDispatcher } from "undici";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { CurrentWeather, getCurrentWeather, getHistoricWeather, HistoricWeather } from "./api";
+import {
+  Coordinates,
+  CurrentWeather,
+  getCurrentWeather,
+  getHistoricWeather,
+  getHistoricWeatherByCity,
+  HistoricWeather,
+} from "./api";
 
 describe("weather", () => {
   let mockAgent: MockAgent;
@@ -177,24 +184,6 @@ describe("weather", () => {
       });
     });
 
-    it("throws 400 error for invalid latitude parameter", async () => {
-      const responsePromise = getHistoricWeather({ lat: 100, lon: 0, date: new Date("2024-01-01T00:00:00Z") });
-
-      await expect(responsePromise).rejects.toMatchObject({
-        message: "lat must be less than or equal to 90",
-        status: 400,
-      });
-    });
-
-    it("throws 400 error for invalid longitude parameter", async () => {
-      const responsePromise = getHistoricWeather({ lat: 50, lon: -200, date: new Date("2024-01-01T00:00:00Z") });
-
-      await expect(responsePromise).rejects.toMatchObject({
-        message: "lon must be greater than or equal to -180",
-        status: 400,
-      });
-    });
-
     it("throws 400 error for invalid date parameter", async () => {
       const responsePromise = getHistoricWeather({ lat: 0, lon: 0, date: "invalid date" as unknown as Date });
 
@@ -203,13 +192,113 @@ describe("weather", () => {
         status: 400,
       });
     });
+  });
 
-    it("throws 400 error for invalid parameters", async () => {
-      const responsePromise = getHistoricWeather({ lat: 91, lon: -181, date: "invalid date" as unknown as Date });
+  describe("getHistoricWeatherByCity", () => {
+    const mockedCoordinatesResponse: Coordinates[] = [
+      {
+        name: "Birmingham",
+        lat: 52.4796992,
+        lon: -1.9026911,
+        country: "GB",
+        state: "England",
+      },
+    ];
+
+    const mockedWeatherResponse: HistoricWeather = {
+      lat: 53.7974,
+      lon: -1.5438,
+      timezone: "Europe/London",
+      timezone_offset: 3600,
+      data: [
+        {
+          temp: 284.84,
+          feels_like: 284.6,
+          weather: [
+            {
+              id: 802,
+              main: "Clouds",
+              description: "scattered clouds",
+              icon: "03n",
+            },
+          ],
+        },
+      ],
+    };
+
+    it("returns expected response for valid query parameters", async () => {
+      mockAgent
+        .get("https://api.openweathermap.org")
+        .intercept({
+          path: "/geo/1.0/direct",
+          method: "GET",
+          query: {
+            q: "Birmingham",
+            appid: "fake_api_key",
+          },
+        })
+        .reply(200, mockedCoordinatesResponse);
+      mockAgent
+        .get("https://api.openweathermap.org")
+        .intercept({
+          path: "/data/3.0/onecall/timemachine",
+          method: "GET",
+          query: {
+            lat: 52.4796992,
+            lon: -1.9026911,
+            dt: 1704067200, // https://www.epochconverter.com used for conversion
+            appid: "fake_api_key",
+            units: "metric",
+          },
+        })
+        .reply(200, mockedWeatherResponse);
+
+      const response = await getHistoricWeatherByCity({ city: "Birmingham", date: new Date("2024-01-01T00:00:00Z") });
+      expect(response).toEqual(mockedWeatherResponse);
+    });
+
+    it("handles error response", async () => {
+      mockAgent
+        .get("https://api.openweathermap.org")
+        .intercept({
+          path: "/geo/1.0/direct",
+          method: "GET",
+          query: {
+            q: "Birmingham",
+            appid: "fake_api_key",
+          },
+        })
+        .reply(200, mockedCoordinatesResponse);
+      mockAgent
+        .get("https://api.openweathermap.org")
+        .intercept({
+          path: "/data/3.0/onecall/timemachine",
+          method: "GET",
+          query: {
+            lat: 52.4796992,
+            lon: -1.9026911,
+            dt: 1704067200, // https://www.epochconverter.com used for conversion
+            appid: "fake_api_key",
+            units: "metric",
+          },
+        })
+        .reply(500, { cod: 500, message: "fake error message" });
+
+      const responsePromise = getHistoricWeatherByCity({ city: "Birmingham", date: new Date("2024-01-01T00:00:00Z") });
 
       await expect(responsePromise).rejects.toMatchObject({
-        message:
-          "lat must be less than or equal to 90. lon must be greater than or equal to -180. date must be a valid date",
+        message: "API Error occurred",
+        name: "APIError",
+        json: { cod: 500, message: "fake error message" },
+        status: 500,
+      });
+    });
+
+    it("throws 400 error for invalid city parameter", async () => {
+      const responsePromise = getHistoricWeatherByCity({ city: "", date: new Date("2024-01-01T00:00:00Z") });
+
+      await expect(responsePromise).rejects.toMatchObject({
+        message: "city is not allowed to be empty",
         status: 400,
       });
     });

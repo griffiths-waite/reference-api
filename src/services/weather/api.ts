@@ -2,6 +2,9 @@ import joi from "joi";
 import { validateRequest } from "../validation";
 import client from "./client";
 
+const dateSchema = joi.date().required();
+const citySchema = joi.string().required();
+
 export interface GetCoordinates {
   city: string;
 }
@@ -14,7 +17,12 @@ export interface Coordinates {
   state: string;
 }
 
+const getCoordinatesSchema = joi.object({
+  city: citySchema,
+});
+
 export const getCoordinates = async ({ city }: GetCoordinates): Promise<Coordinates[]> => {
+  await validateRequest({ city }, getCoordinatesSchema);
   return await client<Coordinates[]>("geo/1.0/direct", {
     query: { q: city },
     method: "GET",
@@ -79,10 +87,8 @@ export interface HistoricWeather {
   }[];
 }
 
-const getHistoricWeatherSchema = joi.object({
-  lat: joi.number().min(-90).max(90).required(),
-  lon: joi.number().min(-180).max(180).required(),
-  date: joi.date().required(),
+const getHistoricWeatherSchema = getCurrentWeatherSchema.append({
+  date: dateSchema,
 });
 
 export const getHistoricWeather = async ({ lat, lon, date }: GetHistoricWeather): Promise<HistoricWeather> => {
@@ -104,8 +110,8 @@ export interface GetHistoricWeatherByCity {
 }
 
 const getHistoricWeatherByCitySchema = joi.object({
-  city: joi.string().required(),
-  date: joi.date().required(),
+  city: citySchema,
+  date: dateSchema,
 });
 
 export const getHistoricWeatherByCity = async ({ city, date }: GetHistoricWeatherByCity): Promise<HistoricWeather> => {
