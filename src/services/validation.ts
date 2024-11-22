@@ -7,6 +7,7 @@ const options: AsyncValidationOptions = {
       label: false,
     },
   },
+  abortEarly: false,
 };
 
 export const validateRequest = async <T>(params: T, schema: ObjectSchema<T>) => {

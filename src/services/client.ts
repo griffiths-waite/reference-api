@@ -52,7 +52,7 @@ const baseFetch = async <ResponseType>(
     signal: AbortSignal.timeout(options.timeout || defaultTimeout),
   });
 
-  logger.debug({ status: response.status }, `(${serviceName}) Exteral API response`);
+  logger.debug({ status: response.status }, `(${serviceName}) External API response`);
 
   if (response.ok) {
     const data = (await response.json()) as ResponseType;
@@ -62,8 +62,8 @@ const baseFetch = async <ResponseType>(
       return options.errorHandler(response);
     } else {
       const error = new APIError(response);
-      logger.error(error, "Error");
-      logger.error(await error.json(), "Error response");
+      await error.setJson();
+      logger.error(error, `(${serviceName}) External API error`);
       throw error;
     }
   }

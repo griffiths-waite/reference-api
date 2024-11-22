@@ -1,4 +1,4 @@
-import { date, number, object, string } from "joi";
+import joi from "joi";
 import { validateRequest } from "../validation";
 import client from "./client";
 
@@ -43,9 +43,9 @@ export interface CurrentWeather {
   cod: number;
 }
 
-const getCurrentWeatherSchema = object({
-  lat: number().min(-90).max(90).required(),
-  lon: number().min(-180).max(180).required(),
+const getCurrentWeatherSchema = joi.object({
+  lat: joi.number().min(-90).max(90).required(),
+  lon: joi.number().min(-180).max(180).required(),
 });
 
 export const getCurrentWeather = async ({ lat, lon }: GetCurrentWeather): Promise<CurrentWeather> => {
@@ -79,14 +79,14 @@ export interface HistoricWeather {
   }[];
 }
 
-const getHistoricWeatherSchema = object({
-  lat: number().min(-90).max(90).required(),
-  lon: number().min(-180).max(180).required(),
-  date: date().required(),
+const getHistoricWeatherSchema = joi.object({
+  lat: joi.number().min(-90).max(90).required(),
+  lon: joi.number().min(-180).max(180).required(),
+  date: joi.date().required(),
 });
 
 export const getHistoricWeather = async ({ lat, lon, date }: GetHistoricWeather): Promise<HistoricWeather> => {
-  await validateRequest({ lat, lon }, getHistoricWeatherSchema);
+  await validateRequest({ lat, lon, date }, getHistoricWeatherSchema);
   return await client<HistoricWeather>("data/3.0/onecall/timemachine", {
     query: {
       lat,
@@ -103,9 +103,9 @@ export interface GetHistoricWeatherByCity {
   date: Date;
 }
 
-const getHistoricWeatherByCitySchema = object({
-  city: string().required(),
-  date: date().required(),
+const getHistoricWeatherByCitySchema = joi.object({
+  city: joi.string().required(),
+  date: joi.date().required(),
 });
 
 export const getHistoricWeatherByCity = async ({ city, date }: GetHistoricWeatherByCity): Promise<HistoricWeather> => {

@@ -3,6 +3,7 @@ import { Response } from "undici";
 export class APIError extends Error {
   status: number;
   statusText: string;
+  json?: unknown;
   #response: Response;
 
   constructor(response: Response) {
@@ -13,7 +14,8 @@ export class APIError extends Error {
     this.#response = response;
   }
 
-  async json() {
-    return await this.#response.json();
+  async setJson() {
+    this.json = await this.#response.json();
+    return this.json;
   }
 }
