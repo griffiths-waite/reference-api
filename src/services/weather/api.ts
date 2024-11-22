@@ -1,3 +1,5 @@
+import { date, number, object, string } from "joi";
+import { validateRequest } from "../validation";
 import client from "./client";
 
 export interface GetCoordinates {
@@ -41,7 +43,13 @@ export interface CurrentWeather {
   cod: number;
 }
 
+const getCurrentWeatherSchema = object({
+  lat: number().min(-90).max(90).required(),
+  lon: number().min(-180).max(180).required(),
+});
+
 export const getCurrentWeather = async ({ lat, lon }: GetCurrentWeather): Promise<CurrentWeather> => {
+  await validateRequest({ lat, lon }, getCurrentWeatherSchema);
   return await client<CurrentWeather>("data/2.5/weather", {
     query: { lat, lon },
     method: "GET",
@@ -71,7 +79,14 @@ export interface HistoricWeather {
   }[];
 }
 
+const getHistoricWeatherSchema = object({
+  lat: number().min(-90).max(90).required(),
+  lon: number().min(-180).max(180).required(),
+  date: date().required(),
+});
+
 export const getHistoricWeather = async ({ lat, lon, date }: GetHistoricWeather): Promise<HistoricWeather> => {
+  await validateRequest({ lat, lon }, getHistoricWeatherSchema);
   return await client<HistoricWeather>("data/3.0/onecall/timemachine", {
     query: {
       lat,
@@ -88,7 +103,13 @@ export interface GetHistoricWeatherByCity {
   date: Date;
 }
 
+const getHistoricWeatherByCitySchema = object({
+  city: string().required(),
+  date: date().required(),
+});
+
 export const getHistoricWeatherByCity = async ({ city, date }: GetHistoricWeatherByCity): Promise<HistoricWeather> => {
+  await validateRequest({ city, date }, getHistoricWeatherByCitySchema);
   const [{ lat, lon }] = await getCoordinates({ city });
   return await getHistoricWeather({ lat, lon, date });
 };
