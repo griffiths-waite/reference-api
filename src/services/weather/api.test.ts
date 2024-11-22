@@ -140,7 +140,7 @@ describe("weather", () => {
           query: {
             lat: 0,
             lon: 0,
-            dt: 1704067200,
+            dt: 1704067200, // https://www.epochconverter.com used for conversion
             appid: "fake_api_key",
             units: "metric",
           },
@@ -160,7 +160,7 @@ describe("weather", () => {
           query: {
             lat: 0,
             lon: 0,
-            dt: 1704067200,
+            dt: 1704067200, // https://www.epochconverter.com used for conversion
             appid: "fake_api_key",
             units: "metric",
           },
