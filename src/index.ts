@@ -1,10 +1,16 @@
 import Fastify from "fastify";
+import oracledb from "oracledb";
+import { config } from "./config";
+import { logger } from "./logger";
+import { gamesRouter } from "./routes/games";
 import healthRoute from "./routes/health";
 import metricsRoute from "./routes/metrics";
-import { gamesRouter } from "./routes/games";
+import weatherApiHealthCheck from "./services/weather/health-check";
+
+oracledb.initOracleClient();
 
 const fastify = Fastify({
-  logger: true,
+  logger,
 });
 
 fastify.register(healthRoute);
@@ -13,7 +19,9 @@ fastify.register(gamesRouter);
 
 const start = async () => {
   try {
-    await fastify.listen({ port: 3000 });
+    logger.level = config.logging.level;
+    await fastify.listen({ port: config.server.port });
+    await weatherApiHealthCheck();
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
